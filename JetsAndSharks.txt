@@ -1,7 +1,7 @@
 Name Gang Age Mar Occupation
 Art Jets 40's sing. pusher
 Al Jets 30's mar. burglar
-Sam Jets 20's  sing. bookie
+Sam Jets 20's sing. bookie
 Clyde Jets 40's sing. bookie
 Mike Jets 30's sing. bookie
 Jim Jets 20's div. burglar
@@ -12,13 +12,13 @@ Lance Jets 20's mar. burglar
 George Jets 20's div. burglar
 Pete Jets 20's sing. bookie
 Fred Jets 20's sing. pusher
-Gene Jets 20's  sing. pusher
+Gene Jets 20's sing. pusher
 Ralph Jets 30's sing. pusher
-Phil Sharks 30's  mar. pusher
+Phil Sharks 30's mar. pusher
 Ike Sharks 30's sing. bookie
 Nick Sharks 30's sing. pusher
-Don Sharks 30's  mar. burglar
-Ned Sharks 30's  mar. bookie
+Don Sharks 30's mar. burglar
+Ned Sharks 30's mar. bookie
 Karl Sharks 40's mar. bookie
 Ken Sharks 20's sing. burglar
 Earl Sharks 40's mar. burglar

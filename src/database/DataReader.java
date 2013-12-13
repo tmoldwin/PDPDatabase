@@ -10,6 +10,13 @@ import java.util.Arrays;
 
 import org.javatuples.Pair;
 
+/**
+ * @author Toviah
+ * @description: Reads data from a file and stores the data in the database. 
+ * The first line of the file specifies the cluster names (separated by spaces);
+ * The remaining lines contain the data, also separated by spaces. Each row of the database
+ * must have an equal number of values to the 
+ */
 public class DataReader {
 
 	

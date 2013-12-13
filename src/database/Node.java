@@ -4,16 +4,16 @@ import java.util.ArrayList;
 
 public class Node {
 
-	private String data;
+	private String name;
 	private String clusterName;
 	
 	public Node(String nodeValue, String nodeCluster) {
-		data = nodeValue;
+		name = nodeValue;
 		clusterName = nodeCluster;
 	}
 	
-	public String getData() {
-		return data;
+	public String getName() {
+		return name;
 	}
 	
 	public String getClusteName(){

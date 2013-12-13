@@ -7,6 +7,10 @@ import org.junit.Test;
 
 import database.DataReader;
 
+/**
+ * @author Toviah
+ * Tests the DataReader class
+ */
 public class DataReaderTest {
 
 	@Test

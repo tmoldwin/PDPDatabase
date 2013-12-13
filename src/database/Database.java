@@ -2,6 +2,7 @@ package database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 /**
  * @author Toviah
@@ -13,7 +14,7 @@ public class Database {
 	private HashMap<String, Integer> nodeToIndex;
 	private ArrayList<ArrayList<Integer>> connections;
 	private int nodeCount;
-	
+	 
 	public Database(){
 		clusters = new HashMap<String, Cluster>();
 		nodes = new HashMap<String, Node>();
@@ -22,7 +23,7 @@ public class Database {
 		nodeCount = 0;
 	}
 
-	public void addRow(String[] nodeNames, String[] clusterNames){
+	public void addRow(String[] clusterNames, String[] nodeNames){
 		try{
 			if (nodeNames.length != clusterNames.length){
 				throw new Exception("The data size is unequal to the number of clusters.");
@@ -42,8 +43,8 @@ public class Database {
 			}
 						
 			//If the node hasn't been seen before, i.e. if this data item does not exist
-			Cluster cluster = clusters.get(clusterName);
 			if(!nodes.keySet().contains(nodeName)){
+				Cluster cluster = clusters.get(clusterName);
 				Node node = new Node(nodeName, clusterName);
 				nodes.put(nodeName, node);
 				cluster.put(node);
@@ -71,6 +72,12 @@ public class Database {
 		}
 	}
 	
+	public PriorityQueue<Node> query(String[] params, String clusterName){
+		PriorityQueue<Node> pq = new PriorityQueue<Node>();
+		return null;
+		
+	}
+
 	public void printConnections(){
 		for(ArrayList<Integer> arr:connections){
 			for(Integer i:arr){
@@ -78,5 +85,11 @@ public class Database {
 			}
 			System.out.println();
 		}
+	}
+	
+	public void addRows(String[] clusters, String[][] rows){
+		for(int i = 0; i<rows.length; i++){
+			addRow(clusters, rows[i]);
+		}		
 	}
 }
