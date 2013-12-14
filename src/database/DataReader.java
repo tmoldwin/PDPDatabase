@@ -28,10 +28,10 @@ public class DataReader {
 			in.read(cbuf);
 			String bufString = new String(cbuf).trim();
 			String[] lines = bufString.split("\n");
-			String[] clusters = lines[0].split(" ");
+			String[] clusters = lines[0].trim().split(" ");
 			String[][] data = new String[lines.length-1][clusters.length];
 			for(int i = 1; i<lines.length; i++){
-				data[i-1] = lines[i].split(" ");
+				data[i-1] = lines[i].trim().split(" ");
 			}
 			return new Pair<String[], String[][]>(clusters, data);
 			

@@ -29,4 +29,17 @@ public class DatabaseTest {
 		db.addRows(pair.getValue0(), pair.getValue1());
 		db.printConnections();
 	}
-}
+	
+	@Test
+	public void testNodes(){
+		Database db = new Database();
+		DataReader dr = new DataReader();
+		Pair<String[], String[][]> pair= dr.loadData("JetsAndSharks.txt");
+		db.addRows(pair.getValue0(), pair.getValue1());
+		for(String s:db.getNodes().keySet()){
+			System.out.println(db.getNodes().get(s).getName() + " " + db.getNodes().get(s).getClusterName());
+			}
+		}
+		
+	}
+

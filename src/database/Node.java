@@ -16,7 +16,7 @@ public class Node {
 		return name;
 	}
 	
-	public String getClusteName(){
+	public String getClusterName(){
 		return clusterName;
 	}
 }

@@ -11,6 +11,26 @@ import java.util.PriorityQueue;
 public class Database {
 	private HashMap<String, Cluster> clusters;
 	private HashMap<String, Node> nodes;
+	public HashMap<String, Cluster> getClusters() {
+		return clusters;
+	}
+
+	public HashMap<String, Node> getNodes() {
+		return nodes;
+	}
+
+	public HashMap<String, Integer> getNodeToIndex() {
+		return nodeToIndex;
+	}
+
+	public ArrayList<ArrayList<Integer>> getConnections() {
+		return connections;
+	}
+
+	public int getNodeCount() {
+		return nodeCount;
+	}
+
 	private HashMap<String, Integer> nodeToIndex;
 	private ArrayList<ArrayList<Integer>> connections;
 	private int nodeCount;
