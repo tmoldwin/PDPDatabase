@@ -16,7 +16,7 @@ public class DataReaderTest {
 	@Test
 	public void testDataReader() {
 		DataReader dr = new DataReader();
-		Pair<String[], String[][]> pair= dr.loadData("JetsAndSharks.txt");
+		Pair<String[], String[][]> pair= dr.loadData("WeatherPlay.txt");
 		for(String s:pair.getValue0()){
 			System.out.print(s+" ");
 		}

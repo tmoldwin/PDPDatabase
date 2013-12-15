@@ -14,10 +14,10 @@ import database.Node;
 
 public class DatabaseTest {
 
-	private Database setupDB(){
+	private Database setupDB(String fileName){
 		Database db = new Database();
 		DataReader dr = new DataReader();
-		Pair<String[], String[][]> pair= dr.loadData("JetsAndSharks.txt");
+		Pair<String[], String[][]> pair= dr.loadData(fileName);
 		db.addRows(pair.getValue0(), pair.getValue1());
 		return db;
 	}
@@ -53,7 +53,7 @@ public class DatabaseTest {
 	
 
 	public void testActivations(){
-		Database db = setupDB();
+		Database db = setupDB("JetsAndSharks.txt");
 		String[] params = {"Jets", "sing."};
 		int[] indices = db.findParamIndices(params);
 		Node node1 = db.getNodes().get("John");
@@ -65,11 +65,36 @@ public class DatabaseTest {
 		System.out.println(node1.compareTo(node2));
 	}
 	
-	@Test
+	
 	public void testBinaryQueryAllData(){
-		Database db = setupDB();
+		Database db = setupDB("JetsAndSharks.txt");
 		String[] params = {"Jets", "sing."};
 		Node[] nodes = db.BinaryQueryAllData("Name", params);
+		for(int i = 0; i < nodes.length; i++){
+			System.out.println(nodes[i].getName()+" " + nodes[i].getActivation());
+		}
+	}
+	
+	
+	public void testNumConnectionsQueryAllData(){
+		Database db = setupDB("JetsAndSharks.txt");
+		String[] params = { "div."};
+		Node[] nodes = db.numConnectionsQueryAllData("Age", params);
+		for(int i = 0; i < nodes.length; i++){
+			System.out.println(nodes[i].getName()+" " + nodes[i].getActivation());
+		}
+	}
+	
+	public void testFrequencyInCluster(){
+		Database db = setupDB("JetsAndSharks.txt");
+		System.out.println(db.getFrequencyInCluster(db.getNodes().get("John"), db.getClusters().get("Name")));
+	}
+	
+	@Test
+	public void testNaiveBayesQueryAllData(){
+		Database db = setupDB("WeatherPlay.txt");
+		String[] params = { "sunny", "cool", "high", "true"};
+		Node[] nodes = db.naiveBayesQueryAllData("play", params);
 		for(int i = 0; i < nodes.length; i++){
 			System.out.println(nodes[i].getName()+" " + nodes[i].getActivation());
 		}

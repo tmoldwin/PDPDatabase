@@ -7,11 +7,14 @@ import java.util.PriorityQueue;
 
 /**
  * @author Toviah This is a database based on the parallel distributed
- *         processing ideas set forth by McClelland and Rumelhart
+ *         processing ideas set forth by McClelland in his 1981 Paper. TODO: BinaryQueryPerfectMatch, NumConnectionsWeightedQuery, ArbitraryWeightedQuery, NumConnectionsAndArbitraryWeightedQuery, NaiveBayesQuery 
  */
 public class Database {
 	private HashMap<String, Cluster> clusters;
 	private HashMap<String, Node> nodes;
+	private HashMap<String, Integer> nodeToIndex;
+	private ArrayList<ArrayList<Integer>> connections;
+	private int nodeCount;
 
 	public HashMap<String, Cluster> getClusters() {
 		return clusters;
@@ -33,9 +36,7 @@ public class Database {
 		return nodeCount;
 	}
 
-	private HashMap<String, Integer> nodeToIndex;
-	private ArrayList<ArrayList<Integer>> connections;
-	private int nodeCount;
+
 
 	public Database() {
 		clusters = new HashMap<String, Cluster>();
@@ -76,7 +77,7 @@ public class Database {
 				ArrayList<Integer> al = new ArrayList<Integer>();
 				connections.add(al); // Add a new node to connections
 				for (int k = 0; k < nodeCount; k++) {
-					al.add(0);
+					al.add(0); //fill out the matrix row for the new node
 				}
 				for (ArrayList<Integer> arr : connections) {
 					arr.add(0); // ensure that the array sizes are all equal
@@ -97,12 +98,6 @@ public class Database {
 				connections.get(jIndex).set(iIndex, val);
 			}
 		}
-	}
-
-	public PriorityQueue<Node> query(String[] params, String clusterName) {
-		PriorityQueue<Node> pq = new PriorityQueue<Node>();
-		return null;
-
 	}
 
 	public void printConnections() {
@@ -136,6 +131,76 @@ public class Database {
 			}
 		}
 		node.setActivation(score);
+	}
+	
+	public void setActivationNumConnections(Node node, int[] queryIndices) {
+		int ind = nodeToIndex.get(node.getName());
+		int score = 0;
+		for (int i = 0; i < queryIndices.length; i++) {
+				score+=connections.get(ind).get(queryIndices[i]);
+		}
+		node.setActivation(score);
+	}
+	
+	public void setActivationNaiveBayes(Node label, Node[] features){
+		double activation = getFrequencyInCluster(label, clusters.get(label.getClusterName()));
+		for(Node feature:features){
+			activation = activation*getConditionalProbability(label, feature); //multiply conditional probabilities
+		}
+		label.setActivation(activation);
+	}
+	
+	public Node[] getNodesFromStrings(String[] queryParams){
+		Node[] nodes = new Node[queryParams.length];
+		for(int i = 0; i< queryParams.length; i++){
+			nodes[i] = this.nodes.get(queryParams[i]);
+		}
+		return nodes;
+	}
+	
+	public Node[] naiveBayesQueryAllData(String clusterName, String[] queryParams){
+		Cluster cluster = clusters.get(clusterName);
+		Node[] nodes = cluster.getNodeArray();
+		for(Node node:nodes){
+			setActivationNaiveBayes(node, getNodesFromStrings(queryParams));
+		}
+		Arrays.sort(nodes);
+		return nodes;
+	}
+	
+	public int getNumRowsInCluster(Cluster cluster){
+		int rowCount = 0;
+		Node[] nodes = cluster.getNodeArray();
+		for (Node n:nodes){
+			int nodeIndex = nodeToIndex.get(n.getName());
+			rowCount += connections.get(nodeIndex).get(nodeIndex); //adds together the values along the diagonals for each node in the cluster to get the frequency
+		}
+		return rowCount;
+	}
+	
+	public double getFrequencyInCluster(Node node, Cluster cluster){
+		double denominator = getNumRowsInCluster(cluster);
+		int thisIndex = nodeToIndex.get(node.getName());
+		double numerator = connections.get(thisIndex).get(thisIndex);
+		return numerator/denominator;
+	}
+	
+	public double getConditionalProbability(Node feature, Node label){
+		int featureIndex = nodeToIndex.get(feature.getName());
+		int labelIndex = nodeToIndex.get(label.getName());
+		double featureToLabelConnectionCount = connections.get(featureIndex).get(labelIndex);
+		double labelCount = connections.get(featureIndex).get(featureIndex);
+		return featureToLabelConnectionCount/labelCount;
+	}
+	
+	public Node[] numConnectionsQueryAllData(String clusterName, String[] queryParams){
+		Cluster cluster = clusters.get(clusterName);
+		Node[] nodes = cluster.getNodeArray();
+		for(Node node:nodes){
+			setActivationNumConnections(node, findParamIndices(queryParams));
+		}
+		Arrays.sort(nodes);
+		return nodes;
 	}
 	
 	public Node[] BinaryQueryAllData(String clusterName, String[] queryParams){
