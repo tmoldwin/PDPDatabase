@@ -15,6 +15,11 @@ public class Cluster {
 		nodes = new HashMap<String, Node>();
 	}
 	
+	public Node[] getNodeArray(){
+		Node[] nodesarray = new Node[nodes.size()];
+		return nodes.values().toArray(nodesarray);
+	}
+	
 	/**
 	 * Adds a node to the cluster
 	 * @param Node n
