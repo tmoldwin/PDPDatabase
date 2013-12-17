@@ -21,6 +21,7 @@ public class DatabaseTest {
 		db.addRows(pair.getValue0(), pair.getValue1());
 		return db;
 	}
+	
 	public void testAddDBRow() {
 		Database db = new Database();
 		String[] clusters = {"Name", "Gang", "Age", "Edu", "Occupation"};
@@ -31,11 +32,11 @@ public class DatabaseTest {
 		db.printConnections();
 	}
 	
-	
+	@Test
 	public void testAddRows(){
 		Database db = new Database();
 		DataReader dr = new DataReader();
-		Pair<String[], String[][]> pair= dr.loadData("JetsAndSharks.txt");
+		Pair<String[], String[][]> pair= dr.loadData("WeatherPlay.txt");
 		db.addRows(pair.getValue0(), pair.getValue1());
 		db.printConnections();
 	}
@@ -65,7 +66,7 @@ public class DatabaseTest {
 		System.out.println(node1.compareTo(node2));
 	}
 	
-	
+
 	public void testBinaryQueryAllData(){
 		Database db = setupDB("JetsAndSharks.txt");
 		String[] params = {"Jets", "sing."};
@@ -90,7 +91,7 @@ public class DatabaseTest {
 		System.out.println(db.getFrequencyInCluster(db.getNodes().get("John"), db.getClusters().get("Name")));
 	}
 	
-	@Test
+
 	public void testNaiveBayesQueryAllData(){
 		Database db = setupDB("WeatherPlay.txt");
 		String[] params = { "sunny", "cool", "high", "true"};

@@ -3,7 +3,6 @@ package database;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.PriorityQueue;
 
 /**
  * @author Toviah This is a database based on the parallel distributed
@@ -13,6 +12,7 @@ public class Database {
 	private HashMap<String, Cluster> clusters;
 	private HashMap<String, Node> nodes;
 	private HashMap<String, Integer> nodeToIndex;
+	private HashMap<Integer, String> indexToNode;
 	private ArrayList<ArrayList<Integer>> connections;
 	private int nodeCount;
 
@@ -42,6 +42,7 @@ public class Database {
 		clusters = new HashMap<String, Cluster>();
 		nodes = new HashMap<String, Node>();
 		nodeToIndex = new HashMap<String, Integer>();
+		indexToNode = new HashMap<Integer, String>();
 		connections = new ArrayList<ArrayList<Integer>>();
 		nodeCount = 0;
 	}
@@ -84,6 +85,7 @@ public class Database {
 				}
 				nodeCount++;
 				nodeToIndex.put(nodeName, nodeCount - 1);
+				indexToNode.put(nodeCount-1, nodeName);
 			}
 		}
 
@@ -101,15 +103,45 @@ public class Database {
 	}
 
 	public void printConnections() {
-		for (ArrayList<Integer> arr : connections) {
-			for (Integer i : arr) {
-				System.out.print("" + i + "\t");
+		System.out.printf("%15s","");
+		for(int i = 0; i < nodeCount; i++){
+			System.out.format("%15s", indexToNode.get(i));
+		}
+		System.out.println();
+		for (int i = 0; i < connections.size(); i++) {
+			System.out.format("%15s", indexToNode.get(i));
+			for (Integer j : connections.get(i)) {
+				System.out.format("%15s", j);
 			}
 			System.out.println();
 		}
 	}
+	
+	public void validateNode(String nodeName){
+			if(!nodes.containsKey(nodeName))
+				try {
+					throw new Exception("Node " + nodeName + " does not exist in the database");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		
+	}
+	
+	public void validateCluster(String clusterName){
+		if(!clusters.containsKey(clusterName))
+			try {
+				throw new Exception("Cluster " + clusterName + " does not exist in the database");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 
 	public int[] findParamIndices(String[] params) {
+		for (String s:params){
+			validateNode(s);
+		}
 		int[] queryIndices = new int[params.length];
 		for (int i = 0; i < params.length; i++) {
 			queryIndices[i] = nodeToIndex.get(params[i]);
@@ -118,9 +150,10 @@ public class Database {
 	}
 
 	/**
-	 * @param node: the node whose activation is to be set
-	 * @param queryIndices: an array of node indices
 	 * Performs a simple count of how many of the query nodes are connected to the current node.
+	 * @param node the node whose activation is to be set
+	 * @param queryIndices an array of node indices
+	 * 
 	 */
 	public void setActivationBinary(Node node, int[] queryIndices) {
 		int ind = nodeToIndex.get(node.getName());
@@ -133,6 +166,11 @@ public class Database {
 		node.setActivation(score);
 	}
 	
+	/**
+	 * @param node
+	 * @param queryIndices
+	 * @description: sets the activation of node to the total number of connections from the nodes specified by queryIndices
+	 */
 	public void setActivationNumConnections(Node node, int[] queryIndices) {
 		int ind = nodeToIndex.get(node.getName());
 		int score = 0;
@@ -143,7 +181,7 @@ public class Database {
 	}
 	
 	public void setActivationNaiveBayes(Node label, Node[] features){
-		double activation = getFrequencyInCluster(label, clusters.get(label.getClusterName()));
+		double activation = getFrequencyInCluster(label, clusters.get(label.getClusterName())); //prior probability is equal to the frequency of this node within its cluster
 		for(Node feature:features){
 			activation = activation*getConditionalProbability(label, feature); //multiply conditional probabilities
 		}
@@ -151,6 +189,9 @@ public class Database {
 	}
 	
 	public Node[] getNodesFromStrings(String[] queryParams){
+		for (String s:queryParams){
+			validateNode(s);
+		}
 		Node[] nodes = new Node[queryParams.length];
 		for(int i = 0; i< queryParams.length; i++){
 			nodes[i] = this.nodes.get(queryParams[i]);
@@ -159,6 +200,10 @@ public class Database {
 	}
 	
 	public Node[] naiveBayesQueryAllData(String clusterName, String[] queryParams){
+		validateCluster(clusterName);
+		for (String s:queryParams){
+			validateNode(s);
+		}
 		Cluster cluster = clusters.get(clusterName);
 		Node[] nodes = cluster.getNodeArray();
 		for(Node node:nodes){
@@ -168,6 +213,10 @@ public class Database {
 		return nodes;
 	}
 	
+	/**
+	 * @param cluster
+	 * @return the total number of rows in each cluster
+	 */
 	public int getNumRowsInCluster(Cluster cluster){
 		int rowCount = 0;
 		Node[] nodes = cluster.getNodeArray();
@@ -194,6 +243,10 @@ public class Database {
 	}
 	
 	public Node[] numConnectionsQueryAllData(String clusterName, String[] queryParams){
+		validateCluster(clusterName);
+		for (String s:queryParams){
+			validateNode(s);
+		}
 		Cluster cluster = clusters.get(clusterName);
 		Node[] nodes = cluster.getNodeArray();
 		for(Node node:nodes){
@@ -204,6 +257,10 @@ public class Database {
 	}
 	
 	public Node[] BinaryQueryAllData(String clusterName, String[] queryParams){
+		validateCluster(clusterName);
+		for (String s:queryParams){
+			validateNode(s);
+		}
 		Cluster cluster = clusters.get(clusterName);
 		Node[] nodes = cluster.getNodeArray();
 		for(Node node:nodes){
